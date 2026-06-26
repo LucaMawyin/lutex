@@ -8,7 +8,7 @@
 }
 
 *{
-    transition: ease-in-out 100ms;
+    box-sizing: border-box;
     user-select: none;
 }
 

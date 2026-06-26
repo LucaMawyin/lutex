@@ -5,9 +5,24 @@ from flask_cors import CORS
 from pylatex import Document, NoEscape, escape_latex
 from datetime import datetime
 import uuid
+import re
+import subprocess
+
+COMMANDS = {
+    r"\section": r"\section",
+    r"\sub": r"\subsection",
+    r"\subsub": r"\subsubsection",
+    r"\b": r"\textbf",
+    r"\i": r"\textit",
+    r"\u": r"\underline",
+    r"\tt": r"\texttt",
+    r"\em": r"\emph",
+    "-" :r"\item",
+}
+ENVIRONMENTS = ["itemize", "enumerate","center", "document"]
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, expose_headers=["lutex-message"])
 
 '''
 Commands:
@@ -18,12 +33,13 @@ flask --app api run --debug
 
 @app.route('/api/route', methods=['POST'])
 def generate():
-    form = request.get_json() or {}
 
+    form = request.get_json() or {}
     output_file = uuid.uuid4().hex
-    pdf_path = create_pdf(form,output_file)
 
     try:
+        pdf_path = create_pdf(form,output_file)
+
         # Store PDF to ram
         with open(pdf_path, "rb") as f:
             pdf_bytes = f.read()
@@ -32,9 +48,33 @@ def generate():
             pdf_bytes,
             mimetype="application/pdf",
             headers={
-                "Content-Disposition": "attachment; filename=resume.pdf"
+                "Content-Disposition": "attachment; filename=resume.pdf",
+                "lutex-message": "PDF generated successfully"
             }
         )
+    
+    except subprocess.CalledProcessError as e:
+        return Response(
+            str(e),
+            status=500,
+            mimetype="text/plain",
+            headers={
+                "lutex-message": f"LaTeX compilation failed: {e}"
+            }
+        )
+        
+    except Exception as e:
+        print("ERROR:", e)
+
+        return Response(
+            str(e),
+            status=500,
+            mimetype="text/plain",
+            headers={
+                "lutex-message": f"ERROR: {str(e)}"
+            }
+        )
+
     
     # ALWAYS run cleanup
     finally:
@@ -215,10 +255,67 @@ def create_pdf(form, output_file:str):
     doc = create_document("LuTex PDF")
 
     content = form.get("content", "")
-    doc.append(NoEscape(r"\section{Generated Content}"))
-    doc.append(escape_latex(content))
+
+    # Convert commands to LaTex commands
+    content = convert_all(content)    
+    doc.append(NoEscape(content))
 
     file_path = output_file
     doc.generate_pdf(file_path, clean_tex=False)
 
     return file_path + ".pdf"
+
+# -------------------------
+# LUTEX SYNTAX TO LATEX
+# -------------------------
+def convert_all(text: str):
+    for cmd, latex in COMMANDS.items():
+        text = convert_command(text, cmd, latex)
+    
+    for env in ENVIRONMENTS:
+        text = parse_blocks(text, env)
+    return text
+
+# -------------------------
+# CONVERT SIMPLE COMMANDS
+# -------------------------
+def convert_command(text: str, cmd: str, latex_cmd: str):
+    pattern = rf"{re.escape(cmd)}\(([^)]*)\)"
+
+    def repl(match):
+        inner = match.group(1)
+        return f"{latex_cmd}{{{inner}}}"
+
+    return re.sub(pattern, repl, text)
+
+# -------------------------
+# PARSE BEGIN/END BLOCKS
+# -------------------------
+def parse_blocks(text, env):
+    pattern = rf"\\{env}\((.*?)\)"
+
+    def repl(match):
+        inner = match.group(1).strip()
+
+        if env == "itemize" or env == "enumerate":
+            items = parse_items(inner)
+            body = "\n".join(f"\\item {i}" for i in items)
+            return f"\\begin{{{env}}}\n{body}\n\\end{{{env}}}"
+
+        if env == "center":
+            return f"\\begin{{center}}\n{inner}\n\\end{{center}}"
+
+        return inner
+
+    return re.sub(pattern, repl, text, flags=re.DOTALL)
+
+def parse_items(text):
+    items = []
+
+    for line in text.splitlines():
+        line = line.strip()
+
+        if line.startswith("-"):
+            items.append(line[1:].strip())
+
+    return items
