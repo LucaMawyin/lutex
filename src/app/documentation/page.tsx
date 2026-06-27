@@ -8,7 +8,7 @@ export default function DocumentationPage() {
             
             <header className="space-y-2">
                 <a href="/">&lt; Return to Main Page</a>
-                <h1 className="text-3xl font-bold">LuTex Documentation</h1>
+                <h1 className="text-[2.5em]! font-bold">LuTex Documentation</h1>
                 <p className="text-gray-600">
                     A simple LaTeX-to-PDF generator using custom intuitive syntax.
                 </p>
@@ -67,35 +67,61 @@ export default function DocumentationPage() {
                 <h2 className="text-xl font-semibold">Syntax</h2>
 
                 <p className="text-gray-700">
-                    LuTex uses a lightweight custom syntax that is converted into LaTeX before PDF generation.
+                    LuTex uses a lightweight custom syntax that compiles into LaTeX before PDF generation.
                 </p>
 
-                <h3 className="font-semibold text-gray-800">Commands</h3>
+                <h3 className="font-semibold text-gray-800">Structure Commands</h3>
                 <ul className="list-disc list-inside text-gray-700">
                     <li><code>\section(text)</code> → Section heading</li>
                     <li><code>\sub(text)</code> → Subsection</li>
                     <li><code>\subsub(text)</code> → Subsubsection</li>
+                    <li><code>\p(text)</code> → Paragraph heading</li>
+                    <li><code>\sp(text)</code> → Subparagraph heading</li>
+                </ul>
+
+                <h3 className="font-semibold text-gray-800">Text Formatting</h3>
+                <ul className="list-disc list-inside text-gray-700">
                     <li><code>\b(text)</code> → Bold text</li>
                     <li><code>\i(text)</code> → Italic text</li>
                     <li><code>\u(text)</code> → Underlined text</li>
-                    <li><code>\tt(text)</code> → Typewriter / monospace text</li>
                     <li><code>\em(text)</code> → Emphasized text</li>
-                    <li><code>- text</code> → List item (used inside environments)</li>
+                    <li><code>\strong(text)</code> → Strong bold text</li>
+                    <li><code>\code(text)</code> → Inline code / monospace</li>
                 </ul>
 
-                <h3 className="font-semibold text-gray-800">Environments</h3>
+                <h3 className="font-semibold text-gray-800">Text Size</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\list(...)</code> → Bullet list (use <code>- item</code> per line)</li>
+                    <li><code>\small(text)</code> → Smaller text</li>
+                    <li><code>\large(text)</code> → Larger text</li>
+                    <li><code>\huge(text)</code> → Extra large text</li>
+                </ul>
+
+                <h3 className="font-semibold text-gray-800">Lists</h3>
+                <ul className="list-disc list-inside text-gray-700">
+                    <li><code>\itemize(...)</code> → Bullet list</li>
                     <li><code>\enumerate(...)</code> → Numbered list</li>
+                    <li>List items must start with <code>- item</code> or <code>-item</code></li>
+                </ul>
+
+                <h3 className="font-semibold text-gray-800">Other</h3>
+                <ul className="list-disc list-inside text-gray-700">
                     <li><code>\center(...)</code> → Centered text block</li>
-                    <li><code>\document(...)</code> → Document block (reserved)</li>
+                    <li><code>\document(...)</code> → Document wrapper (internal use)</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Example</h3>
                 <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
 {`\section(Title)
 
-\\b(Hello world)
+\\p(Introduction)
+
+\\b(Hello World)
+
+\\strong(Important text)
+
+\\code(console.log("LuTex"))
+
+\\large(Big text)
 
 \\itemize(
 - First item
@@ -108,12 +134,13 @@ export default function DocumentationPage() {
                 <h3 className="font-semibold text-gray-800">Notes</h3>
                 <ul className="list-disc list-inside text-gray-700">
                     <li>All commands use parentheses, not braces.</li>
-                    <li>List items must start with <code>-</code>.</li>
-                    <li>Blocks are parsed with regex, so keep formatting simple and clean.</li>
+                    <li>Formatting commands are inline.</li>
+                    <li>Size commands affect visual scale only.</li>
+                    <li>Lists are still based on <code>-</code> items.</li>
                     <li>Nested environments are not fully supported yet.</li>
+                    <li>Parser is regex-based, so keep structure simple.</li>
                 </ul>
             </section>
-
             <footer className="pt-6 text-sm text-gray-500 self-center">
                 &copy; LuTex {new Date().getFullYear()}
             </footer>

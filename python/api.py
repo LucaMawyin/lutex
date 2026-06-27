@@ -18,6 +18,13 @@ COMMANDS = {
     r"\tt": r"\texttt",
     r"\em": r"\emph",
     "-" :r"\item",
+    r"\strong": r"\textbf",
+    r"\code": r"\texttt",
+    r"\small": r"\small",
+    r"\large": r"\large",
+    r"\huge": r"\huge",
+    r"\p": r"\paragraph",
+    r"\sp": r"\subparagraph",
 }
 ENVIRONMENTS = {
     "list": "itemize",
