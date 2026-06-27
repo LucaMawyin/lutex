@@ -67,7 +67,7 @@ export default function DocumentationPage() {
                 <h2 className="text-xl font-semibold">Syntax</h2>
 
                 <p className="text-gray-700">
-                    LuTex uses a lightweight custom syntax that compiles into LaTeX before PDF generation.
+                    LuTex uses a lightweight custom syntax that compiles into LaTeX before PDF generation. LaTex syntax is also supported, and encouraged in instances where custom syntax has not been properly implemented.
                 </p>
 
                 <h3 className="font-semibold text-gray-800">Structure Commands</h3>
@@ -141,7 +141,6 @@ export default function DocumentationPage() {
                     <li>Lists are still based on <code>-</code> items.</li>
                     <li>Nested environments are not fully supported yet.</li>
                     <li>Parser is regex-based, so keep structure simple.</li>
-                    <li>LaTex syntax is also supported</li>
                 </ul>
             </section>
             <footer className="pt-6 text-sm text-gray-500 self-center">

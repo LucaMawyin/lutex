@@ -319,8 +319,11 @@ def parse_blocks(text, env, latex_env):
             body = "\n".join(f"\\item {i}" for i in items)
             return f"\\begin{{{latex_env}}}\n{body}\n\\end{{{latex_env}}}"
 
-        if latex_env in ["center", "align"]:
+        if latex_env in ["align"]:
             return f"\\begin{{{latex_env}*}}\n{inner}\n\\end{{{latex_env}*}}"
+        
+        elif latex_env in ["center"]:
+            return f"\\begin{{{latex_env}}}\n{inner}\n\\end{{{latex_env}}}"
 
         return inner
 
