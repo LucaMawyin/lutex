@@ -30,6 +30,7 @@ COMMANDS = {
 ENVIRONMENTS = {
     "list": "itemize",
     "enumerate": "enumerate",
+    "math" : "align",
     "center": "center",
     "document": "document",
 }
@@ -318,8 +319,8 @@ def parse_blocks(text, env, latex_env):
             body = "\n".join(f"\\item {i}" for i in items)
             return f"\\begin{{{latex_env}}}\n{body}\n\\end{{{latex_env}}}"
 
-        if latex_env == "center":
-            return f"\\begin{{center}}\n{inner}\n\\end{{center}}"
+        if latex_env in ["center", "align"]:
+            return f"\\begin{{{latex_env}}}\n{inner}\n\\end{{{latex_env}}}"
 
         return inner
 
