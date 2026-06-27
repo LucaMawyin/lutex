@@ -62,7 +62,6 @@ def generate():
             mimetype="application/pdf",
             headers={
                 "Content-Disposition": "attachment; filename=resume.pdf",
-                "lutex-message": "PDF generated successfully"
             }
         )
     

@@ -11,11 +11,14 @@ type Log = {
 export default function Home() {
 
     const initialForm = ""
+    const apiUrl = "http://127.0.0.1:5000"
 
     const [form, setForm] = useState(initialForm);
     const [messages, setMessages] = useState<Log[]>([]);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [consoleOpen, setConsoleOpen] = useState(false);
+    const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+    const [ showPdf, setShowPdf ] = useState();
 
     // Need ref for some reason
     const didInit = useRef(false);
@@ -49,6 +52,8 @@ export default function Home() {
         localStorage.setItem("latex-form", form);
     }, [form]);
 
+
+    // Add messages to console
     const addMessage = (text : string) => {
         setMessages(prev => [
             {
@@ -60,54 +65,67 @@ export default function Home() {
         return;
     };
 
-    // Submit info
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!form.length){
-            addMessage("Empty document: add content before exporting to PDF.")
-            return;
-        }
-
-        const res = await fetch(`https://api.lucamawyin.com/lutex/api/route`, {
+    // Get PDF from api
+    const getPdf = async (): Promise<string | null> => {
+        addMessage("Requesting PDF...");
+        const res = await fetch(`${apiUrl}/api/route`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ 
-                content:form 
-            }),
+            body: JSON.stringify({ content: form }),
         });
 
-        // Get lutex message from header
         const lutexMessage = res.headers.get("lutex-message");
-        if (lutexMessage) {
-            addMessage(lutexMessage)
-        }
+        if (lutexMessage) addMessage(lutexMessage);
 
-        // Add error messages to console
         if (!res.ok) {
             const errorText = await res.text();
-
-            setMessages(prev => [
-                {
-                    text: errorText,
-                    time: new Date().toLocaleTimeString(),
-                },
-                ...prev
-            ]);
+            addMessage("PDF generation failed.");
+            addMessage(errorText)
+            return null;
         }
 
-        if (res.ok){
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "LuTex-export.pdf";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        setPdfUrl(url);
+        return url;
+    };
+
+    // Preview PDF
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!form.length) {
+            addMessage("Empty document: add content before exporting to PDF.");
+            return;
         }
+        
+        await getPdf();
+        addMessage("Successfully generated PDF preview");
+    };
+
+    // Download PDF
+    const downloadPdf = async () => {
+
+        addMessage("Download requested.");
+
+        let url = pdfUrl;
+
+        if (!url) {
+            url = await getPdf();
+            if (!url) return;
+        }
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "LuTex-export.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        addMessage("Download completed.");
     };
 
     const updateForm = async (e:React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -198,6 +216,8 @@ export default function Home() {
         });
     };
 
+    const sizeChange = "lg"
+
 	return (
         <div className="
             h-full
@@ -224,61 +244,17 @@ export default function Home() {
 
             {/* CONTENT WRAPPER */}
             <div
-                className="
+                className={`
                     flex 
-                    flex-col md:flex-row
-                    gap-8
+                    flex-col lg:flex-row
+                    justify-evenly
                     w-full
-                    max-w-6xl
-                    md:h-[75vh] h-full
+                    h-full
                     min-h-0
-                "
+                    sm:p-8
+                    gap-8
+                `}
             >
-                {/* TEXT AREA */}
-                <form
-                    className="
-                        font-mono
-
-                        border 
-                        border-gray-400 
-                        rounded-xl
-
-                        flex 
-                        flex-col
-                        flex-1
-
-                        min-w-75
-                        md:min-h-[60vh]
-                        min-h-100
-
-                        p-4
-                        gap-8
-                    "
-                    onSubmit={handleSubmit}
-                >
-                    <textarea
-                        className="
-                            border
-                            border-gray-200
-                            rounded-lg
-
-                            resize-none
-                            flex-1
-                            p-2
-                        "
-                        wrap="off"
-                        value={form}
-                        rows={5}
-                        placeholder={"Start writing..."}
-                        ref={textareaRef}
-                        onChange={updateForm}
-                        onKeyDown={handleKeyDown}
-                    />
-                    <Button
-                        text="Download PDF"
-                        type="submit"
-                    />
-                </form>
 
                 {/* CONSOLE */}
                 <div className={`
@@ -287,9 +263,10 @@ export default function Home() {
                     border-gray-200
                     rounded-xl
 
-                    md:w-[17.5vw]
+                    lg:w-[25vw]
+                    w-screen
                     min-w-75
-                    ${consoleOpen ? "min-h-full" : "min-h-0"}
+                    ${consoleOpen ? "min-h-full" : "min-h-fit"}
 
                     flex 
                     flex-col
@@ -302,24 +279,24 @@ export default function Home() {
                         flex 
                         justify-between 
                         items-center
-                        mb-3
                         text-gray-700 
 
                         text-sm
                     ">
-                        <h2 className="
-                            hidden md:block
-                             
+                        <h2 className={`
+                            hidden lg:block
+                            
                             font-semibold 
                             uppercase 
                             tracking-wide
-                        ">
+
+                        `}>
                             Console
                         </h2>
                         <button
                             type="button"
-                            className="
-                                md:hidden
+                            className={`
+                                lg:hidden
 
                                 bg-white
                                 hover:bg-gray-50
@@ -338,14 +315,14 @@ export default function Home() {
 
                                 cursor-pointer
                                 px-3 py-1
-                            "
+                            `}
                             onClick={() => setConsoleOpen(open => !open)}
                         >
                             Console {consoleOpen ? "▲" : "▼"}
                             {messages.length > 0 && ` (${messages.length})`}
                         </button>
                         <div
-                            className="
+                            className={`
                                 bg-white
                                 hover:bg-gray-50
 
@@ -362,7 +339,7 @@ export default function Home() {
                                 cursor-pointer
                                 px-3 
                                 py-1
-                            "
+                            `}
                             onClick={() => setMessages([])}
                         >
                             CLEAR
@@ -372,10 +349,11 @@ export default function Home() {
                     {/* MESSAGES */}
                     <div className={`
                             ${consoleOpen ? "block" : "hidden"}
-                            md:block
+                            lg:block
                             space-y-4 
                             overflow-y-auto 
                             flex-1
+                            mt-3
                         `}
                     >
                         { !!messages.length ? (
@@ -405,7 +383,90 @@ export default function Home() {
                             </p>
                         )}
                     </div>
+                </div>                    
+
+
+
+                {/* TEXT AREA */}
+                <form
+                    className="
+                        font-mono
+
+                        border 
+                        border-gray-400 
+                        rounded-xl
+
+                        flex 
+                        flex-col
+
+                        min-w-75
+                        lg:w-[40vw]
+                        lg:min-h-[60vh]
+                        min-h-[75vh]
+
+                        p-4
+                        gap-8
+                    "
+                    onSubmit={handleSubmit}
+                >
+                    <textarea
+                        className="
+                            border
+                            border-gray-200
+                            rounded-lg
+
+                            resize-none
+                            flex-1
+                            p-2
+                        "
+                        wrap="off"
+                        value={form}
+                        rows={5}
+                        placeholder={"Start writing..."}
+                        ref={textareaRef}
+                        onChange={updateForm}
+                        onKeyDown={handleKeyDown}
+                    />
+
+                    <div className="flex justify-between">
+                        <Button
+                            text="View Preview"
+                            variant="secondary"
+                            type="submit"
+                        />
+
+                        <Button
+                            text="Download PDF"
+                            onClick={downloadPdf}
+                        />                
+                    </div>
+
+                </form>
+                
+                <div
+                    className={`
+                        flex 
+                        flex-col
+
+                        min-w-75
+                        lg:w-[25vw]
+                        lg:min-h-[60vh]
+                        min-h-[75vh]
+                    `}
+                >
+                    {pdfUrl && (
+                        <iframe
+                            src={pdfUrl}
+                            className="
+                                w-full 
+                                h-full 
+                                rounded-xl
+                            "
+                        />                             
+                    )}
+                   
                 </div>
+
             </div>
 
 
