@@ -320,7 +320,7 @@ def parse_blocks(text, env, latex_env):
             return f"\\begin{{{latex_env}}}\n{body}\n\\end{{{latex_env}}}"
 
         if latex_env in ["center", "align"]:
-            return f"\\begin{{{latex_env}}}\n{inner}\n\\end{{{latex_env}}}"
+            return f"\\begin{{{latex_env}*}}\n{inner}\n\\end{{{latex_env}}}"
 
         return inner
 
