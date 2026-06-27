@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Log = {
     text: string;
@@ -14,6 +14,8 @@ export default function Home() {
 
     const [form, setForm] = useState(initialForm);
     const [messages, setMessages] = useState<Log[]>([]);
+    const selectionRef = useRef<{ start: number; end: number } | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         const saved = localStorage.getItem("latex-form");
@@ -97,6 +99,7 @@ export default function Home() {
         if (e.key !== "Tab") return;
 
         e.preventDefault();
+        e.stopPropagation();
 
         const textarea = e.currentTarget;
 
@@ -104,35 +107,75 @@ export default function Home() {
         const end = textarea.selectionEnd;
 
         const value = form;
-        
 
         const before = value.slice(0, start);
         const selected = value.slice(start, end);
         const after = value.slice(end);
 
+        const isUnindent = e.shiftKey;
+
+        let delta = 0;
+
+        const transformLine = (line: string) => {
+            if (isUnindent) {
+                const match = line.match(/^ {1,4}/);
+                if (match) {
+                    delta -= match[0].length;
+                    return line.slice(match[0].length);
+                }
+                return line;
+            } else {
+                delta += 4;
+                return "    " + line;
+            }
+        };
+
+        let transformed: string;
+
+        if (start === end) {
+            // single line case
+            const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+            const lineEnd = value.indexOf("\n", start);
+            const actualEnd = lineEnd === -1 ? value.length : lineEnd;
+
+            const line = value.slice(lineStart, actualEnd);
+
+            const newLine = transformLine(line);
+
+            transformed =
+                value.slice(0, lineStart) +
+                newLine +
+                value.slice(actualEnd);
+
+            setForm(transformed);
+
+            requestAnimationFrame(() => {
+                const el = textareaRef.current;
+                if (!el) return;
+
+                el.focus();
+                el.selectionStart = start + delta;
+                el.selectionEnd = start + delta;
+            });
+
+            return;
+        }
+
         const lines = selected.split("\n");
 
-        let newSelected: string;
-
-        if (e.shiftKey) {
-            // UNINDENT
-            newSelected = lines
-                .map(line => line.replace(/^ {1,4}/, "")) 
-                .join("\n");
-        } else {
-            // INDENT
-            newSelected = lines
-                .map(line => "    " + line)
-                .join("\n");
-        }
+        const newSelected = lines.map(transformLine).join("\n");
 
         const newValue = before + newSelected + after;
 
         setForm(newValue);
 
         requestAnimationFrame(() => {
-            textarea.selectionStart = start;
-            textarea.selectionEnd = start + newSelected.length;
+            const el = textareaRef.current;
+            if (!el) return;
+
+            el.focus();
+            el.selectionStart = start;
+            el.selectionEnd = end + delta;
         });
     };
 
@@ -192,6 +235,7 @@ export default function Home() {
                         value={form}
                         rows={5}
                         placeholder={"Start writing..."}
+                        ref={textareaRef}
                         onChange={updateForm}
                         onKeyDown={handleKeyDown}
                     />
