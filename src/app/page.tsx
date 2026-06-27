@@ -30,7 +30,7 @@ export default function Home() {
     // Submit info
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await fetch(`https://api.lucamawyin.com/lutex/api/route`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/route`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -88,14 +88,21 @@ export default function Home() {
         ">
             <h1 
                 style={{ fontFamily: "Computer Modern Serif" }}
-                className="self-center my-8"
+                className="self-center mt-8"
             >
                 LuTex
             </h1>
-            <a
-                href=""
+            <a 
+                href="/documentation" 
+                target="__blank"
+                className="
+                    self-center 
+                    text-md 
+                    text-blue-600 
+                    mb-8
+                "
             >
-                <h2></h2>
+                Documentation
             </a>
             <div
                 className="

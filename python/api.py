@@ -19,12 +19,14 @@ COMMANDS = {
     r"\em": r"\emph",
     "-" :r"\item",
 }
-ENVIRONMENTS = ["itemize", "enumerate","center", "document"]
-
+ENVIRONMENTS = {
+    "list": "itemize",
+    "enumerate": "enumerate",
+    "center": "center",
+    "document": "document",
+}
 app = Flask(__name__)
 CORS(app, expose_headers=["lutex-message"])
-print("DEPLOY TEST", flush=True)
-
 
 '''
 Commands:
@@ -274,8 +276,8 @@ def convert_all(text: str):
     for cmd, latex in COMMANDS.items():
         text = convert_command(text, cmd, latex)
     
-    for env in ENVIRONMENTS:
-        text = parse_blocks(text, env)
+    for env, latex_env in ENVIRONMENTS.items():
+        text = parse_blocks(text, env, latex_env)
     return text
 
 # -------------------------
@@ -293,18 +295,22 @@ def convert_command(text: str, cmd: str, latex_cmd: str):
 # -------------------------
 # PARSE BEGIN/END BLOCKS
 # -------------------------
-def parse_blocks(text, env):
+def parse_blocks(text, env, latex_env):
     pattern = rf"\\{env}\((.*?)\)"
 
     def repl(match):
         inner = match.group(1).strip()
 
-        if env == "itemize" or env == "enumerate":
+        if latex_env in ["itemize", "enumerate"]:
             items = parse_items(inner)
-            body = "\n".join(f"\\item {i}" for i in items)
-            return f"\\begin{{{env}}}\n{body}\n\\end{{{env}}}"
 
-        if env == "center":
+            if not items and inner:
+                items = [inner]
+
+            body = "\n".join(f"\\item {i}" for i in items)
+            return f"\\begin{{{latex_env}}}\n{body}\n\\end{{{latex_env}}}"
+
+        if latex_env == "center":
             return f"\\begin{{center}}\n{inner}\n\\end{{center}}"
 
         return inner
@@ -318,7 +324,9 @@ def parse_items(text):
         line = line.strip()
 
         if line.startswith("-"):
-            items.append(line[1:].strip())
+            item = line[1:].strip()
+            if item:  # prevent empty \item
+                items.append(item)
 
     return items
 
