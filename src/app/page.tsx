@@ -18,7 +18,6 @@ export default function Home() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [consoleOpen, setConsoleOpen] = useState(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-    const [ showPdf, setShowPdf ] = useState();
 
     // Need ref for some reason
     const didInit = useRef(false);
@@ -215,8 +214,6 @@ export default function Home() {
             el.selectionEnd = end + delta;
         });
     };
-
-    const sizeChange = "lg"
 
 	return (
         <div className="
@@ -427,7 +424,8 @@ export default function Home() {
                         onKeyDown={handleKeyDown}
                     />
 
-                    <div className="flex justify-between">
+                    {/* BUTTONS */}
+                    <div className="flex justify-between flex-col gap-4 sm:gap-0 sm:flex-row">
                         <Button
                             text="View Preview"
                             variant="secondary"
@@ -455,7 +453,7 @@ export default function Home() {
                 >
                     {pdfUrl && (
                         <iframe
-                            src={pdfUrl}
+                            src={`${pdfUrl}`}
                             className="w-full h-full rounded-xl"
                         />
                     )}
