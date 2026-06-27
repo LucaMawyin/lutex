@@ -163,6 +163,7 @@ export default function Home() {
                     flex-col md:flex-row
                     gap-4
                     mx-auto
+                    md:h-[75vh] h-[60vh]
                 "
             >
                 <form
@@ -173,7 +174,6 @@ export default function Home() {
                         flex flex-col
                         md:w-[50vw] w-screen
                         min-w-75
-                        md:h-[75vh] h-[60vh]
                         p-4
                         gap-8
                     "
@@ -207,6 +207,8 @@ export default function Home() {
                     rounded-xl
                     p-4
                     shadow-sm
+                    flex flex-col
+                    h-full
                 ">
                     <div className="
                         flex 
@@ -246,7 +248,7 @@ export default function Home() {
                     </div>
 
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 overflow-y-auto flex-1">
                         { !!messages.length ? (
                             messages.map((message,i) => (
                                 <div
