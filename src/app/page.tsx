@@ -188,6 +188,7 @@ export default function Home() {
                             flex-1
                             p-2
                         "
+                        wrap="off"
                         value={form}
                         rows={5}
                         placeholder={"Start writing..."}

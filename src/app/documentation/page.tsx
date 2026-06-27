@@ -141,6 +141,7 @@ export default function DocumentationPage() {
                     <li>Lists are still based on <code>-</code> items.</li>
                     <li>Nested environments are not fully supported yet.</li>
                     <li>Parser is regex-based, so keep structure simple.</li>
+                    <li>LaTex syntax is also supported</li>
                 </ul>
             </section>
             <footer className="pt-6 text-sm text-gray-500 self-center">
