@@ -69,7 +69,7 @@ export default function Home() {
             return;
         }
 
-        const res = await fetch(`https://api.lucamawyin.com/lutex/api/route`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/route`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
