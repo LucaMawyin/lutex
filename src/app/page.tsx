@@ -93,6 +93,49 @@ export default function Home() {
         setForm(e.target.value);
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key !== "Tab") return;
+
+        e.preventDefault();
+
+        const textarea = e.currentTarget;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+
+        const value = form;
+        
+
+        const before = value.slice(0, start);
+        const selected = value.slice(start, end);
+        const after = value.slice(end);
+
+        const lines = selected.split("\n");
+
+        let newSelected: string;
+
+        if (e.shiftKey) {
+            // UNINDENT
+            newSelected = lines
+                .map(line => line.replace(/^ {1,4}/, "")) 
+                .join("\n");
+        } else {
+            // INDENT
+            newSelected = lines
+                .map(line => "    " + line)
+                .join("\n");
+        }
+
+        const newValue = before + newSelected + after;
+
+        setForm(newValue);
+
+        requestAnimationFrame(() => {
+            textarea.selectionStart = start;
+            textarea.selectionEnd = start + newSelected.length;
+        });
+    };
+
 	return (
         <div className="
             h-full
@@ -125,6 +168,7 @@ export default function Home() {
                 <form
                     className="
                         border border-gray-400 
+                        font-mono
                         rounded-xl
                         flex flex-col
                         md:w-[50vw] w-screen
@@ -148,6 +192,7 @@ export default function Home() {
                         rows={5}
                         placeholder={"Start writing..."}
                         onChange={updateForm}
+                        onKeyDown={handleKeyDown}
                     />
                     <Button
                         text="Download PDF"
