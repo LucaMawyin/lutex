@@ -14,8 +14,8 @@ export default function Home() {
 
     const [form, setForm] = useState(initialForm);
     const [messages, setMessages] = useState<Log[]>([]);
-    const selectionRef = useRef<{ start: number; end: number } | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [consoleOpen, setConsoleOpen] = useState(false);
 
     useEffect(() => {
         const saved = localStorage.getItem("latex-form");
@@ -183,40 +183,54 @@ export default function Home() {
         <div className="
             h-full
             flex flex-col
+            items-center
         ">
-            <h1 
-                style={{ fontFamily: "Computer Modern Serif" }}
-                className="self-center mt-8"
-            >
-                LuTex
-            </h1>
-            <a 
-                href="/documentation" 
-                className="
-                    self-center 
-                    text-md 
-                    mb-8
-                "
-            >
-                Documentation
-            </a>
+
+            {/* HEADER */}
+            <div className="my-8 text-center">
+                <h1 
+                    style={{ fontFamily: "Computer Modern Serif" }}
+                    
+                >
+                    LuTex
+                </h1>
+                <a 
+                    href="/documentation" 
+                    className="text-md"
+                >
+                    Documentation
+                </a>                
+            </div>
+
+
+            {/* CONTENT WRAPPER */}
             <div
                 className="
                     flex 
                     flex-col md:flex-row
-                    gap-4
-                    mx-auto
-                    md:h-[75vh] h-[60vh]
+                    gap-8
+                    w-full
+                    max-w-6xl
+                    md:h-[75vh] h-full
+                    min-h-0
                 "
             >
+                {/* TEXT AREA */}
                 <form
                     className="
-                        border border-gray-400 
                         font-mono
+
+                        border 
+                        border-gray-400 
                         rounded-xl
-                        flex flex-col
-                        md:w-[50vw] w-screen
+
+                        flex 
+                        flex-col
+                        md:flex-1
+
                         min-w-75
+                        min-h-[60vh]
+
                         p-4
                         gap-8
                     "
@@ -227,6 +241,7 @@ export default function Home() {
                             border
                             border-gray-200
                             rounded-lg
+
                             resize-none
                             flex-1
                             p-2
@@ -244,17 +259,25 @@ export default function Home() {
                         type="submit"
                     />
                 </form>
-                <div className="
-                    border border-gray-200
+
+                {/* CONSOLE */}
+                <div className={`
                     bg-gray-50
-                    md:w-[20vw]
-                    min-w-64
+                    border 
+                    border-gray-200
                     rounded-xl
+
+                    md:w-[17.5vw]
+                    min-w-75
+                    ${consoleOpen ? "min-h-full" : "min-h-0"}
+
+                    flex 
+                    flex-col
+                    
                     p-4
                     shadow-sm
-                    flex flex-col
-                    h-full
-                ">
+                `}>
+                    {/* HEADER */}
                     <div className="
                         flex 
                         justify-between 
@@ -263,6 +286,7 @@ export default function Home() {
                         text-gray-700 
                     ">
                         <h2 className="
+                            hidden md:block
                             text-sm 
                             font-semibold 
                             uppercase 
@@ -271,6 +295,20 @@ export default function Home() {
                             Console
                         </h2>
                         <button
+                            type="button"
+                            className="
+                                md:hidden
+                                border border-gray-200
+                                rounded-lg
+                                p-3
+                                text-left
+                            "
+                            onClick={() => setConsoleOpen(open => !open)}
+                        >
+                            Console {consoleOpen ? "▲" : "▼"}
+                            {messages.length > 0 && ` (${messages.length})`}
+                        </button>
+                        <div
                             className="
                                 px-3 py-1
                                 text-xs font-medium
@@ -289,11 +327,18 @@ export default function Home() {
                             onClick={() => setMessages([])}
                         >
                             CLEAR
-                        </button>              
+                        </div>              
                     </div>
 
-
-                    <div className="space-y-4 overflow-y-auto flex-1">
+                    {/* MESSAGES */}
+                    <div className={`
+                            ${consoleOpen ? "block" : "hidden"}
+                            md:block
+                            space-y-4 
+                            overflow-y-auto 
+                            flex-1
+                        `}
+                    >
                         { !!messages.length ? (
                             messages.map((message,i) => (
                                 <div
