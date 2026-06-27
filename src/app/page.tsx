@@ -11,7 +11,7 @@ type Log = {
 export default function Home() {
 
     const initialForm = ""
-    const apiUrl = "http://127.0.0.1:5000"
+    const apiUrl = "https://api.lucamawyin.com/lutex"
 
     const [form, setForm] = useState(initialForm);
     const [messages, setMessages] = useState<Log[]>([]);
@@ -264,7 +264,6 @@ export default function Home() {
                     rounded-xl
 
                     lg:w-[25vw]
-                    w-screen
                     min-w-75
                     ${consoleOpen ? "min-h-full" : "min-h-fit"}
 
@@ -457,12 +456,8 @@ export default function Home() {
                     {pdfUrl && (
                         <iframe
                             src={pdfUrl}
-                            className="
-                                w-full 
-                                h-full 
-                                rounded-xl
-                            "
-                        />                             
+                            className="w-full h-full rounded-xl"
+                        />
                     )}
                    
                 </div>
