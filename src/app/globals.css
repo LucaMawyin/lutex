@@ -15,7 +15,14 @@ html,body {
     padding:0;
     margin:0;
     height: 100%;
+}
 
+body{
+    user-select: none;
+}
+
+code, pre{
+    user-select: text;
 }
 
 h1{

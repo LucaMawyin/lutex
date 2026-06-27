@@ -30,6 +30,18 @@ export default function Home() {
     // Submit info
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!form.length){
+            setMessages(prev => [
+                {
+                    text: "Empty document: add content before exporting to PDF.",
+                    time: new Date().toLocaleTimeString(),
+                },
+                ...prev
+            ]);
+            return;
+        }
+
         const res = await fetch(`https://api.lucamawyin.com/lutex/api/route`, {
             method: "POST",
             headers: {
@@ -136,7 +148,6 @@ export default function Home() {
                         rows={5}
                         placeholder={"Start writing..."}
                         onChange={updateForm}
-                        required
                     />
                     <Button
                         text="Download PDF"
@@ -152,9 +163,43 @@ export default function Home() {
                     p-4
                     shadow-sm
                 ">
-                    <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
-                        Console
-                    </h2>
+                    <div className="
+                        flex 
+                        justify-between 
+                        items-center
+                        mb-3
+                        text-gray-700 
+                    ">
+                        <h2 className="
+                            text-sm 
+                            font-semibold 
+                            uppercase 
+                            tracking-wide
+                        ">
+                            Console
+                        </h2>
+                        <button
+                            className="
+                                px-3 py-1
+                                text-xs font-medium
+                                bg-white
+                                border border-gray-200
+                                rounded-md
+                                
+                                hover:bg-gray-50
+                                hover:border-gray-300
+
+                                transition-all
+                                duration-100
+
+                                cursor-pointer
+                            "
+                            onClick={() => setMessages([])}
+                        >
+                            CLEAR
+                        </button>              
+                    </div>
+
 
                     <div className="space-y-4">
                         { !!messages.length ? (

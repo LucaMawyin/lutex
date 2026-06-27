@@ -12,6 +12,7 @@ COMMANDS = {
     r"\section": r"\section",
     r"\sub": r"\subsection",
     r"\subsub": r"\subsubsection",
+    r"\heading": r"\ressection",
     r"\b": r"\textbf",
     r"\i": r"\textit",
     r"\u": r"\underline",

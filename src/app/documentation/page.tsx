@@ -63,7 +63,7 @@ export default function DocumentationPage() {
                 </ul>
             </section>
 
-            <section className="space-y-2">
+            <section id="syntax" className="space-y-2">
                 <h2 className="text-xl font-semibold">Syntax</h2>
 
                 <p className="text-gray-700">
@@ -77,6 +77,7 @@ export default function DocumentationPage() {
                     <li><code>\subsub(text)</code> → Subsubsection</li>
                     <li><code>\p(text)</code> → Paragraph heading</li>
                     <li><code>\sp(text)</code> → Subparagraph heading</li>
+                    <li><code>\heading(text)</code> → Styled section divider (custom LuTex heading)</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Text Formatting</h3>
@@ -106,7 +107,6 @@ export default function DocumentationPage() {
                 <h3 className="font-semibold text-gray-800">Other</h3>
                 <ul className="list-disc list-inside text-gray-700">
                     <li><code>\center(...)</code> → Centered text block</li>
-                    <li><code>\document(...)</code> → Document wrapper (internal use)</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Example</h3>
@@ -127,6 +127,8 @@ export default function DocumentationPage() {
 - First item
 - Second item
 )
+
+\\heading(Experience)
 
 \\center(This is centered text)`}
                 </pre>
