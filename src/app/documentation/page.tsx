@@ -98,7 +98,7 @@ export default function DocumentationPage() {
 
                 <h3 className="font-semibold text-gray-800">Lists</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\itemize(...)</code> → Bullet list</li>
+                    <li><code>\list(...)</code> → Bullet list</li>
                     <li><code>\enumerate(...)</code> → Numbered list</li>
                     <li>List items must start with <code>- item</code> or <code>-item</code></li>
                 </ul>
@@ -111,7 +111,7 @@ export default function DocumentationPage() {
 
                 <h3 className="font-semibold text-gray-800">Example</h3>
                 <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
-{`\section(Title)
+{`\\section(Title)
 
 \\p(Introduction)
 
@@ -123,7 +123,7 @@ export default function DocumentationPage() {
 
 \\large(Big text)
 
-\\itemize(
+\\list(
 - First item
 - Second item
 )
