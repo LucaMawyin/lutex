@@ -284,10 +284,12 @@ export default function Home() {
                         items-center
                         mb-3
                         text-gray-700 
+
+                        text-sm
                     ">
                         <h2 className="
                             hidden md:block
-                            text-sm 
+                             
                             font-semibold 
                             uppercase 
                             tracking-wide
@@ -298,10 +300,24 @@ export default function Home() {
                             type="button"
                             className="
                                 md:hidden
-                                border border-gray-200
-                                rounded-lg
-                                p-3
-                                text-left
+
+                                bg-white
+                                hover:bg-gray-50
+
+                                border 
+                                border-gray-200
+                                hover:border-gray-300
+                                rounded-md
+
+                                font-semibold
+                                uppercase
+                                tracking-wide
+                                
+                                transition-all
+                                duration-100
+
+                                cursor-pointer
+                                px-3 py-1
                             "
                             onClick={() => setConsoleOpen(open => !open)}
                         >
@@ -310,19 +326,22 @@ export default function Home() {
                         </button>
                         <div
                             className="
-                                px-3 py-1
-                                text-xs font-medium
                                 bg-white
-                                border border-gray-200
+                                hover:bg-gray-50
+
+                                border 
+                                border-gray-200
+                                hover:border-gray-300
                                 rounded-md
                                 
-                                hover:bg-gray-50
-                                hover:border-gray-300
+                                font-medium
 
                                 transition-all
                                 duration-100
 
                                 cursor-pointer
+                                px-3 
+                                py-1
                             "
                             onClick={() => setMessages([])}
                         >
