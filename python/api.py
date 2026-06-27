@@ -23,6 +23,7 @@ ENVIRONMENTS = ["itemize", "enumerate","center", "document"]
 
 app = Flask(__name__)
 CORS(app, expose_headers=["lutex-message"])
+print("DEPLOY TEST", flush=True)
 
 '''
 Commands:
