@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 :root{
-    --transition-duration: 200ms;
+    --transition-duration: 100ms;
     --contrast-colour: #0F172A;
     --contrast-light: #334155;
 }
@@ -21,4 +21,13 @@ html,body {
 
 h1{
     font-size:3em;
+}
+
+a {
+    color: #3B82F6;
+    transition: color var(--transition-duration);
+}
+
+a:hover {
+    color: #1D4ED8;
 }

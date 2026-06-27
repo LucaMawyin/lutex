@@ -1,8 +1,13 @@
+export const metadata = {
+    title: "LuTex Documentation",
+};
+
 export default function DocumentationPage() {
     return (
         <div className="flex flex-col max-w-3xl mx-auto p-6 gap-8">
             
             <header className="space-y-2">
+                <a href="/">&lt; Return to Main Page</a>
                 <h1 className="text-3xl font-bold">LuTex Documentation</h1>
                 <p className="text-gray-600">
                     A simple LaTeX-to-PDF generator using custom intuitive syntax.
@@ -75,12 +80,12 @@ export default function DocumentationPage() {
                     <li><code>\u(text)</code> → Underlined text</li>
                     <li><code>\tt(text)</code> → Typewriter / monospace text</li>
                     <li><code>\em(text)</code> → Emphasized text</li>
-                    <li><code>-(text)</code> → List item (used inside environments)</li>
+                    <li><code>- text</code> → List item (used inside environments)</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Environments</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\itemize(...)</code> → Bullet list (use <code>- item</code> per line)</li>
+                    <li><code>\list(...)</code> → Bullet list (use <code>- item</code> per line)</li>
                     <li><code>\enumerate(...)</code> → Numbered list</li>
                     <li><code>\center(...)</code> → Centered text block</li>
                     <li><code>\document(...)</code> → Document block (reserved)</li>
