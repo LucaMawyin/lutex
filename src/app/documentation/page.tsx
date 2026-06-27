@@ -1,8 +1,36 @@
-export const metadata = {
-    title: "LuTex Documentation",
-};
+"use client";
+
+import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
+
+const EXAMPLE_SYNTAX = `\\section(Title)
+
+\\p(Introduction)
+
+\\b(Hello World)
+\\strong(Important text)
+
+\\code(console.log("LuTex"))
+
+\\large(Big text)
+
+\\list(
+- First item
+- Second item
+)
+
+\\math(
+a = b + c
+)
+
+\\heading(Experience)
+
+\\center(This is centered text)`;
 
 export default function DocumentationPage() {
+
+    const router = useRouter();
+
     return (
         <div className="flex flex-col max-w-3xl mx-auto p-6 gap-8">
             
@@ -67,81 +95,82 @@ export default function DocumentationPage() {
                 <h2 className="text-xl font-semibold">Syntax</h2>
 
                 <p className="text-gray-700">
-                    LuTex uses a lightweight custom syntax that compiles into LaTeX before PDF generation. LaTex syntax is also supported, and encouraged in instances where custom syntax has not been properly implemented.
+                    LuTex uses a lightweight custom syntax that compiles into LaTeX commands before generating a PDF.
+                    Most commands follow the format <code>\command(text)</code>, and some shortcuts map directly to LaTeX equivalents.
                 </p>
 
                 <h3 className="font-semibold text-gray-800">Structure Commands</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\section(text)</code> → Section heading</li>
+                    <li><code>\section(text)</code> → Section</li>
                     <li><code>\sub(text)</code> → Subsection</li>
                     <li><code>\subsub(text)</code> → Subsubsection</li>
-                    <li><code>\p(text)</code> → Paragraph heading</li>
-                    <li><code>\sp(text)</code> → Subparagraph heading</li>
-                    <li><code>\heading(text)</code> → Styled section divider (custom LuTex heading)</li>
+                    <li><code>\p(text)</code> → Paragraph</li>
+                    <li><code>\sp(text)</code> → Subparagraph</li>
+                    <li><code>\heading(text)</code> → Custom section heading (mapped internally)</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Text Formatting</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\b(text)</code> → Bold text</li>
-                    <li><code>\i(text)</code> → Italic text</li>
-                    <li><code>\u(text)</code> → Underlined text</li>
-                    <li><code>\em(text)</code> → Emphasized text</li>
-                    <li><code>\strong(text)</code> → Strong bold text</li>
-                    <li><code>\code(text)</code> → Inline code / monospace</li>
+                    <li><code>\b(text)</code> or <code>\strong(text)</code> → Bold</li>
+                    <li><code>\i(text)</code> → Italic</li>
+                    <li><code>\u(text)</code> → Underline</li>
+                    <li><code>\em(text)</code> → Emphasis</li>
+                    <li><code>\code(text)</code> or <code>\tt(text)</code> → Monospace / code</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Text Size</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\small(text)</code> → Smaller text</li>
-                    <li><code>\large(text)</code> → Larger text</li>
-                    <li><code>\huge(text)</code> → Extra large text</li>
+                    <li><code>\small(text)</code> → Small text</li>
+                    <li><code>\large(text)</code> → Large text</li>
+                    <li><code>\huge(text)</code> → Huge text</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Lists</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\list(...)</code> → Bullet list</li>
+                    <li><code>\list(...)</code> → Bullet list (<code>itemize</code>)</li>
                     <li><code>\enumerate(...)</code> → Numbered list</li>
-                    <li>List items must start with <code>- item</code> or <code>-item</code></li>
+                    <li>
+                        List items use <code>- item</code> or <code>-item</code> syntax inside the block
+                    </li>
+                    <li>
+                        Single dash shortcut: <code>-</code> is also mapped to <code>\item</code>
+                    </li>
                 </ul>
 
-                <h3 className="font-semibold text-gray-800">Other</h3>
+                <h3 className="font-semibold text-gray-800">Math</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\center(...)</code> → Centered text block</li>
+                    <li><code>\math(...)</code> → Math environment (align-based backend)</li>
+                </ul>
+
+                <h3 className="font-semibold text-gray-800">Environments</h3>
+                <ul className="list-disc list-inside text-gray-700">
+                    <li><code>\list</code> → itemize environment</li>
+                    <li><code>\enumerate</code> → enumerate environment</li>
+                    <li><code>\center</code> → centered block</li>
+                    <li><code>\document</code> → document wrapper</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Example</h3>
                 <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
-{`\\section(Title)
-
-\\p(Introduction)
-
-\\b(Hello World)
-
-\\strong(Important text)
-
-\\code(console.log("LuTex"))
-
-\\large(Big text)
-
-\\list(
-- First item
-- Second item
-)
-
-\\heading(Experience)
-
-\\center(This is centered text)`}
+{EXAMPLE_SYNTAX}
                 </pre>
+                <Button
+                    text="Load Example"
+                    className="block mx-auto"
+                    onClick={() => {
+                        localStorage.setItem("LuTexExample", EXAMPLE_SYNTAX)
+                        router.push("/")
+                    }}
+                />
 
                 <h3 className="font-semibold text-gray-800">Notes</h3>
                 <ul className="list-disc list-inside text-gray-700">
-                    <li>All commands use parentheses, not braces.</li>
-                    <li>Formatting commands are inline.</li>
-                    <li>Size commands affect visual scale only.</li>
-                    <li>Lists are still based on <code>-</code> items.</li>
-                    <li>Nested environments are not fully supported yet.</li>
-                    <li>Parser is regex-based, so keep structure simple.</li>
+                    <li>All commands use parentheses instead of LaTeX braces.</li>
+                    <li>Most commands are wrappers around LaTeX equivalents.</li>
+                    <li>Parser is regex-based — avoid deeply nested structures.</li>
+                    <li>Some features (like math and environments) depend on backend support.</li>
                 </ul>
+
             </section>
             <footer className="pt-6 text-sm text-gray-500 self-center">
                 &copy; LuTex {new Date().getFullYear()}

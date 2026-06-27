@@ -17,34 +17,59 @@ export default function Home() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [consoleOpen, setConsoleOpen] = useState(false);
 
+    // Need ref for some reason
+    const didInit = useRef(false);
     useEffect(() => {
-        const saved = localStorage.getItem("latex-form");
+        
+        if (didInit.current) return;
+        didInit.current = true;
 
+        const saved = localStorage.getItem("latex-form");
+        const example = localStorage.getItem("LuTexExample");
         if (saved) {
-            setForm(saved);
+            setForm(saved)
+            addMessage("Form successfully loaded from memory")
+            if (example) {
+                addMessage("Example was ignored because a saved form already exists in localStorage.");
+                localStorage.removeItem("LuTexExample");
+            }
+
+            return;
         }
+
+        if (example) {
+            setForm(example)
+            addMessage("Example loaded succesfully");
+            localStorage.removeItem("LuTexExample");
+        };
+
     }, []);
 
     useEffect(() => {
         localStorage.setItem("latex-form", form);
     }, [form]);
 
+    const addMessage = (text : string) => {
+        setMessages(prev => [
+            {
+                text: text,
+                time: new Date().toLocaleTimeString(),
+            },
+            ...prev
+        ]);
+        return;
+    };
+
     // Submit info
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!form.length){
-            setMessages(prev => [
-                {
-                    text: "Empty document: add content before exporting to PDF.",
-                    time: new Date().toLocaleTimeString(),
-                },
-                ...prev
-            ]);
+            addMessage("Empty document: add content before exporting to PDF.")
             return;
         }
 
-        const res = await fetch(`https://api.lucamawyin.com/lutex/api/route`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/route`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -57,13 +82,7 @@ export default function Home() {
         // Get lutex message from header
         const lutexMessage = res.headers.get("lutex-message");
         if (lutexMessage) {
-            setMessages(prev => [
-                {
-                    text: lutexMessage,
-                    time: new Date().toLocaleTimeString(),
-                },
-                ...prev
-            ]);
+            addMessage(lutexMessage)
         }
 
         // Add error messages to console
