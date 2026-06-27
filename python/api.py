@@ -282,12 +282,50 @@ def create_pdf(form, output_file:str):
 # LUTEX SYNTAX TO LATEX
 # -------------------------
 def convert_all(text: str):
+    text = convert_fraction(text)
+    text = convert_math(text)
+
     for cmd, latex in COMMANDS.items():
         text = convert_command(text, cmd, latex)
     
     for env, latex_env in ENVIRONMENTS.items():
         text = parse_blocks(text, env, latex_env)
     return text
+
+# -------------------------
+# CONVERT MATH
+# -------------------------
+def convert_math(text: str):
+    pattern = r"\\math\((.*?)\)"
+
+    def repl(match):
+        inner = match.group(1).strip()
+
+        # convert multiline math into a single LaTeX-safe line
+        lines = [
+            line.strip()
+            for line in inner.splitlines()
+            if line.strip()
+        ]
+
+        content = " \\\\ \n".join(lines)
+
+        return f"\\begin{{align*}}\n{content}\n\\end{{align*}}"
+
+    return re.sub(pattern, repl, text, flags=re.DOTALL)
+
+# -------------------------
+# CONVERT FRACTIONS
+# -------------------------
+def convert_fraction(text: str):
+    pattern = r"\\frac\(([^,]+),\s*([^)]+)\)"
+
+    def repl(match):
+        a = match.group(1).strip()
+        b = match.group(2).strip()
+        return f"\\frac{{{a}}}{{{b}}}"
+
+    return re.sub(pattern, repl, text)
 
 # -------------------------
 # CONVERT SIMPLE COMMANDS
@@ -318,9 +356,6 @@ def parse_blocks(text, env, latex_env):
 
             body = "\n".join(f"\\item {i}" for i in items)
             return f"\\begin{{{latex_env}}}\n{body}\n\\end{{{latex_env}}}"
-
-        if latex_env in ["align"]:
-            return f"\\begin{{{latex_env}*}}\n{inner}\n\\end{{{latex_env}*}}"
         
         elif latex_env in ["center"]:
             return f"\\begin{{{latex_env}}}\n{inner}\n\\end{{{latex_env}}}"

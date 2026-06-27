@@ -3,29 +3,68 @@
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 
-const EXAMPLE_SYNTAX = `\\section(Title)
+const EXAMPLE_SYNTAX = `\\section(Welcome to LuTex)
 
-\\p(Introduction)
+\\p(This is a lightweight markup system designed to make writing structured documents simple and readable.)
 
-\\b(Hello World)
-\\strong(Important text)
-
-\\code(console.log("LuTex"))
-
-\\large(Big text)
+\\heading(Why use LuTex?)
 
 \\list(
-- First item
-- Second item
+- Clean, minimal syntax
+- Easy to parse
+- Fast to write
+- No boilerplate
 )
 
+\\heading(Text Styling)
+
+\\p(You can emphasize text using simple commands:)
+
+\\b(Bold text shows importance)
+\\strong(Strong text highlights critical information)
+\\large(Large text stands out for titles or key ideas)
+
+\\heading(Code Example)
+
+\\code(
+function greet(name) {
+    console.log("Hello, " + name);
+}
+)
+
+\\heading(Math Support)
+
 \\math(
+E = mc^2
+)
+
+\\p(Inline expressions like a = b + c can be used for simple formulas.)
+
+\\heading(Layout Control)
+
+\\center(This text is centered for emphasis)
+
+\\p(That's it — simple, readable, and structured.)`;
+
+const MATH_SYNTAX = `\\math(
 a = b + c
 )
 
-\\heading(Experience)
+\\math(
+E = mc^2
+)
 
-\\center(This is centered text)`;
+\\math(
+\\frac(a,b) = x^2 + y^2
+)
+
+\\math(
+\\alpha + \\beta = \\gamma
+)
+
+\\math(
+\\frac(1,2) + \\frac(3,4)
+)`;
 
 export default function DocumentationPage() {
 
@@ -137,10 +176,42 @@ export default function DocumentationPage() {
                     </li>
                 </ul>
 
-                <h3 className="font-semibold text-gray-800">Math</h3>
+                <h3 className="font-semibold text-gray-800">Math Syntax Details</h3>
+
+                <p className="text-gray-700">
+                    The <code>\math(...)</code> block is used for mathematical expressions.
+                    Inside the block, you can write standard LaTeX-style math expressions,
+                    but without the need for full LaTeX document syntax.
+                </p>
+
                 <ul className="list-disc list-inside text-gray-700">
-                    <li><code>\math(...)</code> → Math environment (align-based backend)</li>
+                    <li>Use standard math operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code></li>
+                    <li>
+                        Fractions: <code>\frac(a,b)</code> → renders as a/b in LaTeX
+                    </li>                    
+                    <li>Exponents: <code>a^2</code></li>
+                    <li>Subscripts: <code>a_1</code></li>
+                    <li>Greek letters (if supported by backend): <code>\alpha, \beta, \gamma</code></li>
                 </ul>
+
+                <h4 className="font-semibold text-gray-800">Examples</h4>
+
+                <pre className="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap wrap-break-words overflow-x-hidden">
+{MATH_SYNTAX}
+                </pre>
+                <Button
+                    text="Load Example"
+                    className="block mx-auto"
+                    onClick={() => {
+                        localStorage.setItem("LuTexExample", MATH_SYNTAX)
+                        router.push("/")
+                    }}
+                />
+
+                <p className="text-gray-700">
+                    Note: All expressions are parsed as a single math block. Multi-line alignment
+                    and advanced LaTeX environments (like <code>align</code>) may not be fully supported.
+                </p>
 
                 <h3 className="font-semibold text-gray-800">Environments</h3>
                 <ul className="list-disc list-inside text-gray-700">
@@ -151,7 +222,7 @@ export default function DocumentationPage() {
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Example</h3>
-                <pre className="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
+                <pre className="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap wrap-break-words overflow-x-hidden">
 {EXAMPLE_SYNTAX}
                 </pre>
                 <Button
