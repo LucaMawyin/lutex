@@ -30,7 +30,7 @@ export default function Home() {
     // Submit info
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await fetch(`http://127.0.0.1:5000/api/route`, {
+        const res = await fetch(`https://api.lucamawyin.com/lutex/api/route`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
