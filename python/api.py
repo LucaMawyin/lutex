@@ -319,3 +319,6 @@ def parse_items(text):
             items.append(line[1:].strip())
 
     return items
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)
