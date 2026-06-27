@@ -226,10 +226,11 @@ export default function Home() {
 
                         flex 
                         flex-col
-                        md:flex-1
+                        flex-1
 
                         min-w-75
-                        min-h-[60vh]
+                        md:min-h-[60vh]
+                        min-h-100
 
                         p-4
                         gap-8
