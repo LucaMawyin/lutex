@@ -11,7 +11,7 @@ type Log = {
 export default function Home() {
 
     const initialForm = ""
-    const apiUrl = "https:/api.lucamawyin.com/lutex"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
     const [form, setForm] = useState(initialForm);
     const [messages, setMessages] = useState<Log[]>([]);
