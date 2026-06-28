@@ -447,23 +447,21 @@ export default function Home() {
                 
                 <div
                     className={`
-                        border 
-                        border-gray-400 
-                        rounded-xl
-
                         flex 
                         flex-col
 
                         min-w-75
-                        lg:w-[40vw]
+                        lg:w-[25vw]
+
+                        lg:h-auto
                         lg:min-h-[60vh]
                         min-h-[75vh]
                     `}
                 >
                     {pdfUrl && (
-                        <iframe
+                        <embed
                             src={`${pdfUrl}`}
-                            className="w-[100vw] h-[100vh] rounded-xl"
+                            className="w-full h-full rounded-xl"
                         />
                     )}
                    
