@@ -124,11 +124,11 @@ export default function Home() {
 
         const a = document.createElement("a");
         a.href = url;
+        a.target = "_blank"
         a.download = "LuTex-export.pdf";
         document.body.appendChild(a);
         a.click();
         a.remove();
-        window.open(url, "_blank");
 
         addMessage("Download completed.");
     };
