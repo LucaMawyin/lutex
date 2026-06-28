@@ -463,7 +463,7 @@ export default function Home() {
                     {pdfUrl && (
                         <iframe
                             src={`${pdfUrl}`}
-                            className="w-full h-full rounded-xl"
+                            className="w-[100vw] h-[100vh] rounded-xl"
                         />
                     )}
                    
