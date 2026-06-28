@@ -128,6 +128,7 @@ export default function Home() {
         document.body.appendChild(a);
         a.click();
         a.remove();
+        window.open(url, "_blank");
 
         addMessage("Download completed.");
     };
@@ -456,10 +457,6 @@ export default function Home() {
                         lg:h-auto
                         lg:min-h-[60vh]
                         min-h-[75vh]
-
-                        border 
-                        border-gray-400 
-                        rounded-xl
                         
                         ${pdfUrl ? "flex" : "hidden lg:flex lg:invisible"}
                     `}
@@ -468,7 +465,7 @@ export default function Home() {
                         <object
                             data={pdfUrl}
                             type="application/pdf"
-                            className="flex-1 rounded-xl"
+                            className="flex-1 border border-gray-400 rounded-xl"
                         />
                     )}
                    
