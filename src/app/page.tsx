@@ -455,12 +455,14 @@ export default function Home() {
 
                         lg:h-auto
                         lg:min-h-[60vh]
-                        min-h-[75vh]
+                        
+                        ${pdfUrl ? "border border-gray-400 rounded-xl min-h-[75vh]" : "" }
                     `}
                 >
                     {pdfUrl && (
-                        <embed
-                            src={`${pdfUrl}`}
+                        <object
+                            data={pdfUrl}
+                            type="application/pdf"
                             className="w-full h-full rounded-xl"
                         />
                     )}
