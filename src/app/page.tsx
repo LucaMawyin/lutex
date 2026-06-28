@@ -447,11 +447,15 @@ export default function Home() {
                 
                 <div
                     className={`
+                        border 
+                        border-gray-400 
+                        rounded-xl
+
                         flex 
                         flex-col
 
                         min-w-75
-                        lg:w-[25vw]
+                        lg:w-[40vw]
                         lg:min-h-[60vh]
                         min-h-[75vh]
                     `}
