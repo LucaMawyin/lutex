@@ -11,7 +11,7 @@ type Log = {
 export default function Home() {
 
     const initialForm = ""
-    const apiUrl = "https://api.lucamawyin.com/lutex"
+    const apiUrl = "http://127.0.0.1:5000"
 
     const [form, setForm] = useState(initialForm);
     const [messages, setMessages] = useState<Log[]>([]);
@@ -76,7 +76,10 @@ export default function Home() {
         });
 
         const lutexMessage = res.headers.get("lutex-message");
-        if (lutexMessage) addMessage(lutexMessage);
+        if (lutexMessage) {
+            addMessage(lutexMessage);
+            return null;
+        };
 
         if (!res.ok) {
             const errorText = await res.text();
@@ -101,7 +104,9 @@ export default function Home() {
             return;
         }
         
-        await getPdf();
+        const pdf = await getPdf();
+        if (pdf == null) return;
+        
         addMessage("Successfully generated PDF preview");
     };
 
