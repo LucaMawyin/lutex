@@ -373,7 +373,7 @@ export default function Home() {
                                     <div className="text-xs text-gray-400 mb-1">
                                         {message.time}
                                     </div>
-                                    <div className="text-gray-800 wrap-break-word whitespace-pre-wrap">
+                                    <div className="text-gray-800 wrap-break-word whitespace-pre-wrap select-text">
                                         {message.text}
                                     </div>
                                 </div>                                
