@@ -468,7 +468,7 @@ export default function Home() {
                         <object
                             data={pdfUrl}
                             type="application/pdf"
-                            className="w-full h-full rounded-xl"
+                            className="flex-1 rounded-xl"
                         />
                     )}
                    
