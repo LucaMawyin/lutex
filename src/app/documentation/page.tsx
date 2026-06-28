@@ -219,7 +219,6 @@ export default function DocumentationPage() {
                     <li><code>\list</code> → itemize environment</li>
                     <li><code>\enumerate</code> → enumerate environment</li>
                     <li><code>\center</code> → centered block</li>
-                    <li><code>\document</code> → document wrapper</li>
                 </ul>
 
                 <h3 className="font-semibold text-gray-800">Example</h3>
