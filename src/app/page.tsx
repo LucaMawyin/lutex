@@ -221,6 +221,31 @@ export default function Home() {
         });
     };
 
+    // Load preview on ctrl + s
+    useEffect(() => {
+        const handleKeyDown = async (e: KeyboardEvent) => {
+
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+                e.preventDefault();
+
+                // Return on empty form
+                if (!form.length) {
+                    addMessage("Request failed: form empty");
+                    return
+                }
+
+                if (await getPdf()) addMessage("Successfully generated PDF preview");
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+
+    }, [form, pdfUrl])
+
 	return (
         <div className="
             h-full
