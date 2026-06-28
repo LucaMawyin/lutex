@@ -455,8 +455,13 @@ export default function Home() {
 
                         lg:h-auto
                         lg:min-h-[60vh]
+                        min-h-[75vh]
+
+                        border 
+                        border-gray-400 
+                        rounded-xl
                         
-                        ${pdfUrl ? "border border-gray-400 rounded-xl min-h-[75vh]" : "" }
+                        ${pdfUrl ? "flex" : "hidden lg:flex lg:invisible"}
                     `}
                 >
                     {pdfUrl && (
