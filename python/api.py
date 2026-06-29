@@ -331,7 +331,7 @@ def convert_math(text: str):
             if line.strip()
         ]
 
-        content = " \\\\ \n".join(lines)
+        content = " \\\\ \n".join(lines).replace("*",r"\times")
 
         return f"\\begin{{align*}}\n{content}\n\\end{{align*}}"
 
