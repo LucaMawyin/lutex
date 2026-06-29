@@ -6,27 +6,46 @@ from pylatex import Document, NoEscape, escape_latex
 from datetime import datetime
 import uuid
 import re
+import regex
 import subprocess
 
 COMMANDS = {
-    r"\section": r"\section",
-    r"\sub": r"\subsection",
-    r"\subsub": r"\subsubsection",
-    r"\heading": r"\ressection",
-    r"\b": r"\textbf",
-    r"\i": r"\textit",
-    r"\u": r"\underline",
-    r"\tt": r"\texttt",
-    r"\em": r"\emph",
-    "-" :r"\item",
-    r"\strong": r"\textbf",
-    r"\code": r"\texttt",
-    r"\small": r"\small",
-    r"\large": r"\large",
-    r"\huge": r"\huge",
-    r"\p": r"\paragraph",
-    r"\sp": r"\subparagraph",
+    r"\section": (r"\section", "block"),
+    r"\sub": (r"\subsection", "block"),
+    r"\subsub": (r"\subsubsection", "block"),
+    r"\heading": (r"\ressection", "block"),
+    r"\p": (r"\paragraph", "block"),
+    r"\sp": (r"\subparagraph", "block"),
+    "-": (r"\item", "block"),
+
+    r"\b": (r"\textbf", "inline"),
+    r"\i": (r"\textit", "inline"),
+    r"\u": (r"\underline", "inline"),
+    r"\tt": (r"\texttt", "inline"),
+    r"\em": (r"\emph", "inline"),
+    r"\strong": (r"\textbf", "inline"),
+    r"\code": (r"\texttt", "inline"),
+    r"\small": (r"\small", "inline"),
+    r"\large": (r"\large", "inline"),
+    r"\huge": (r"\huge", "inline"),
+
+    # Math characters
+    r"\{" : (r"\left", "inline"),
+    r"\}" : (r"\left", "inline"),
+    r"\~": (r"\textasciitilde{}", "inline"),
+    r"\^": (r"\textasciicircum{}", "inline"),
+
+    # Arrows
+    r"\->": (r"\rightarrow", "inline"),
+    r"\<-": (r"\leftarrow", "inline"),
+    r"\=>": (r"\Rightarrow", "inline"),
+    r"\<=": (r"\Leftarrow", "inline"),
+
+    # common shorthand math symbols
+    r"\infty": (r"\infty", "inline"),
+    r"\n": (r"\\", "inline"),
 }
+
 ENVIRONMENTS = {
     "list": "itemize",
     "enumerate": "enumerate",
@@ -239,10 +258,10 @@ def create_document(name: str):
     \usepackage{fancyhdr}
     \usepackage{comment}
     \newcommand{\ressection}[1]{
+        \addvspace{1em}
         \noindent\textbf{\large #1}
         \par\vspace{0.3em}
         \hrule
-        \vspace{0.6em}
     }
     \pagenumbering{gobble}
     """))
@@ -281,14 +300,19 @@ def create_pdf(form, output_file:str):
 # LUTEX SYNTAX TO LATEX
 # -------------------------
 def convert_all(text: str):
+
+    text = passthrough(text)
     text = convert_fraction(text)
     text = convert_math(text)
 
-    for cmd, latex in COMMANDS.items():
-        text = convert_command(text, cmd, latex)
-    
     for env, latex_env in ENVIRONMENTS.items():
         text = parse_blocks(text, env, latex_env)
+
+    for cmd, (latex,kind) in COMMANDS.items():
+        text = convert_command(text, cmd, latex,kind)
+
+    
+
     return text
 
 # -------------------------
@@ -329,14 +353,24 @@ def convert_fraction(text: str):
 # -------------------------
 # CONVERT SIMPLE COMMANDS
 # -------------------------
-def convert_command(text: str, cmd: str, latex_cmd: str):
-    pattern = rf"{re.escape(cmd)}\(([^)]*)\)"
+def convert_command(text: str, cmd: str, latex_cmd: str, kind:str):
+    pattern = rf"{regex.escape(cmd)}\(([^)]*)\)(\n?)"
 
     def repl(match):
         inner = match.group(1)
-        return f"{latex_cmd}{{{inner}}}"
+        new_line = match.group(2)
+        
+        base = f"{latex_cmd}{{{inner}}}"
+        if new_line and kind == "inline":
+            return base + r"\\"
+        
+        if new_line and cmd in ["\\p","\\sp"]:
+            return base + r"\mbox{}"
+        
+        return base
 
-    return re.sub(pattern, repl, text)
+
+    return regex.sub(pattern, repl, text, flags=regex.DOTALL)
 
 # -------------------------
 # PARSE BEGIN/END BLOCKS
@@ -375,6 +409,32 @@ def parse_items(text):
                 items.append(item)
 
     return items
+
+def passthrough(text: str):
+    pattern = r"(\\[a-zA-Z]+)(\(([^)]*)\)|\{([^}]*)\})?"
+
+    def repl(match):
+        cmd = match.group(1)
+        inner_parenthesis = match.group(3)
+        inner_bracket = match.group(4)
+
+
+        name = cmd.lstrip("\\")
+
+        # known command → leave it alone
+        if cmd in COMMANDS or cmd.lstrip("\\") in ENVIRONMENTS:
+            return match.group(0)
+        
+        if inner_parenthesis is not None:
+            return f"{cmd}{{{inner_parenthesis}}}"
+
+        if inner_bracket is not None:
+            return f"{cmd}{{{inner_bracket}}}"
+        
+        return f"$\\{name}$"
+
+
+    return re.sub(pattern, repl, text, flags=re.DOTALL)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
