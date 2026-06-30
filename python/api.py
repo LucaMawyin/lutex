@@ -272,7 +272,6 @@ def create_document(name: str):
     doc.preamble.append(NoEscape(rf"""
     \hypersetup{{
         pdftitle=LuTex Document
-        pdfauthor={{}}
     }}
     """))
 
