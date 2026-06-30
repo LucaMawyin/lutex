@@ -109,11 +109,11 @@ def generate():
     
     # ALWAYS run cleanup
     finally:
-        '''try:
+        try:
             
             cleanup_output_files(output_file)
         except Exception as e:
-            print("Cleanup error:", e)'''
+            print("Cleanup error:", e)
 
 # -------------------------
 # DELETE ALL FILES
@@ -323,7 +323,7 @@ def convert_all(text: str):
 # CONVERT MATH
 # -------------------------
 def convert_math(text: str):
-    pattern = r"\\math\((.*?)\)"
+    pattern = r"\\math\(((?:[^()]+|(?R))*)\)"
 
     def repl(match):
         inner = match.group(1).strip()
@@ -339,7 +339,7 @@ def convert_math(text: str):
 
         return f"\\begin{{align*}}\n{content}\n\\end{{align*}}"
 
-    return re.sub(pattern, repl, text, flags=re.DOTALL)
+    return regex.sub(pattern, repl, text, flags=regex.DOTALL)
 
 # -------------------------
 # CONVERT FRACTIONS
