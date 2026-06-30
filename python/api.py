@@ -294,7 +294,7 @@ def create_pdf(form, output_file:str):
     doc.generate_pdf(
         file_path, 
         clean_tex=False,
-        compiler="/usr/local/texlive/2026/bin/x86_64-linux/pdflatex"
+        compiler="pdflatex"
     )
 
     return file_path + ".pdf"
