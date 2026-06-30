@@ -63,7 +63,7 @@ E = mc^2
 )
 
 \\math(
-\\frac(1,2) + \\frac(3,4)
+\\frac(1,2)
 )`;
 
 export default function DocumentationPage() {
