@@ -109,10 +109,11 @@ def generate():
     
     # ALWAYS run cleanup
     finally:
+        '''
         try:
             cleanup_output_files(output_file)
         except Exception as e:
-            print("Cleanup error:", e)
+            print("Cleanup error:", e)'''
 
 # -------------------------
 # DELETE ALL FILES
