@@ -292,7 +292,11 @@ def create_pdf(form, output_file:str):
     doc.append(NoEscape(content))
 
     file_path = output_file
-    doc.generate_pdf(file_path, clean_tex=False)
+    doc.generate_pdf(
+        file_path, 
+        clean_tex=False,
+        compiler="/usr/local/texlive/2026/bin/x86_64-linux/pdflatex"
+    )
 
     return file_path + ".pdf"
 
