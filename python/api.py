@@ -331,9 +331,6 @@ def convert_math(text: str):
             for line in inner.splitlines()
             if line.strip()
         ]
-        
-        if len(lines) == 1:
-            return f"\\[{lines[0]}\\]"
 
         content = " \\\\ \n".join(lines)
         return f"\\begin{{align*}}\n{content}\n\\end{{align*}}"
