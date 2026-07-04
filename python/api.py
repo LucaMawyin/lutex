@@ -295,7 +295,7 @@ def create_pdf(form, output_file:str):
     doc.generate_pdf(
         file_path, 
         clean_tex=False,
-        compiler="/usr/local/texlive/2026/bin/x86_64-linux/pdflatex"
+        compiler="pdflatex"
     )
 
     return file_path + ".pdf"
@@ -312,10 +312,7 @@ def convert_all(text: str):
     for env, latex_env in ENVIRONMENTS.items():
         text = parse_blocks(text, env, latex_env)
 
-    for cmd, (latex,kind) in COMMANDS.items():
-        text = convert_command(text, cmd, latex,kind)
-
-    
+    text = convert_commands(text)
 
     return text
 
@@ -334,9 +331,11 @@ def convert_math(text: str):
             for line in inner.splitlines()
             if line.strip()
         ]
+        
+        if len(lines) == 1:
+            return f"\\[{lines[0]}\\]"
 
         content = " \\\\ \n".join(lines)
-
         return f"\\begin{{align*}}\n{content}\n\\end{{align*}}"
 
     return regex.sub(pattern, repl, text, flags=regex.DOTALL)
@@ -357,24 +356,36 @@ def convert_fraction(text: str):
 # -------------------------
 # CONVERT SIMPLE COMMANDS
 # -------------------------
-def convert_command(text: str, cmd: str, latex_cmd: str, kind:str):
-    pattern = rf"{regex.escape(cmd)}\(([^)]*)\)(\n?)"
+def convert_commands(text: str):
+    pattern = regex.compile(
+        r"(\\[a-zA-Z]+)\((?P<inner>(?:[^()]|\((?P>inner)\))*)\)(?P<newline>\n?)",
+        flags=regex.DOTALL,
+    )
+    matches = list(pattern.finditer(text))
 
-    def repl(match):
-        inner = match.group(1)
-        new_line = match.group(2)
-        
-        base = f"{latex_cmd}{{{inner}}}"
-        if new_line and kind == "inline":
-            return base + r"\\"
-        
+    if not matches:
+        return text
+
+    new_string = ""
+    last = 0
+    for m in matches:
+        new_string += text[last:m.start()]
+
+        cmd = m.group(1)
+        inner = m.group("inner").replace("\n", r"~\\").replace(" ",r"\hspace*{0.25em}")
+        new_line = m.group("newline")
+
+        new_string = new_string + (f"{COMMANDS[cmd][0]}{{{convert_commands(inner)}}}") 
+        if new_line and COMMANDS[cmd][1] == "inline":
+            new_string += r"~\\"
+
         if new_line and cmd in ["\\p","\\sp"]:
-            return base + r"\mbox{}"
-        
-        return base
+            new_string += r"~\\"
 
+        last = m.end()
 
-    return regex.sub(pattern, repl, text, flags=regex.DOTALL)
+    new_string += text[last:]
+    return new_string
 
 # -------------------------
 # PARSE BEGIN/END BLOCKS

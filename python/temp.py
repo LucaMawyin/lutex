@@ -2,24 +2,43 @@ import re
 import regex
 
 COMMANDS = {
-    r"\section": r"\section",
-    r"\sub": r"\subsection",
-    r"\subsub": r"\subsubsection",
-    r"\heading": r"\ressection",
-    r"\b": r"\textbf",
-    r"\i": r"\textit",
-    r"\u": r"\underline",
-    r"\tt": r"\texttt",
-    r"\em": r"\emph",
-    "-" :r"\item",
-    r"\strong": r"\textbf",
-    r"\code": r"\texttt",
-    r"\small": r"\small",
-    r"\large": r"\large",
-    r"\huge": r"\huge",
-    r"\p": r"\paragraph",
-    r"\sp": r"\subparagraph",
+    r"\section": (r"\section", "block"),
+    r"\sub": (r"\subsection", "block"),
+    r"\subsub": (r"\subsubsection", "block"),
+    r"\heading": (r"\ressection", "block"),
+    r"\p": (r"\paragraph", "block"),
+    r"\sp": (r"\subparagraph", "block"),
+    "-": (r"\item", "block"),
+
+    r"\b": (r"\textbf", "inline"),
+    r"\i": (r"\textit", "inline"),
+    r"\u": (r"\underline", "inline"),
+    r"\tt": (r"\texttt", "inline"),
+    r"\em": (r"\emph", "inline"),
+    r"\strong": (r"\textbf", "inline"),
+    r"\code": (r"\texttt", "inline"),
+    r"\small": (r"\small", "inline"),
+    r"\large": (r"\large", "inline"),
+    r"\huge": (r"\huge", "inline"),
+
+    # Math characters
+    r"\{" : (r"\left", "inline"),
+    r"\}" : (r"\left", "inline"),
+    r"\~": (r"\textasciitilde{}", "inline"),
+    r"\^": (r"\textasciicircum{}", "inline"),
+
+    # Arrows
+    r"\->": (r"\rightarrow", "inline"),
+    r"\<-": (r"\leftarrow", "inline"),
+    r"\=>": (r"\Rightarrow", "inline"),
+    r"\<=": (r"\Leftarrow", "inline"),
+
+    # common shorthand math symbols
+    r"\infty": (r"\infty", "inline"),
+    r"\n": (r"\\", "inline"),
 }
+
+
 ENVIRONMENTS = {
     "list": "itemize",
     "enumerate": "enumerate",
@@ -80,38 +99,77 @@ The appendix repeats all supported commands for completeness:
 The final statement uses \strong(final emphasis) to close the document cleanly and consistently.
 """
 
-def convert_commands(s : str):
-    out = []
-    stack = []
+nested_string = r"""
+\section(Nested Command Demo)
 
-    i = 0
-    while i < len(s):
-        matched = False
+This sentence contains \b(bold text with \i(italic inside bold) for emphasis).
 
-        if s[i] == "\\":
-            for cmd, latex_cmd in COMMANDS.items():
-                if s.startswith(cmd + "(", i):
-                    out.append(latex_cmd + "{")
-                    stack.append("}")
-                    i += len(cmd) + 1 # skip "\cmd("
-                    matched = True
-                    break
-            
-            if matched:
-                continue
+Here is \i(italic text containing \b(bold words) and \u(underlined words)).
 
-            out.append(s[i])
-            i += 1
+Nested formatting can go deeper:
+\b(Bold starts \i(then italic \u(then underline) back to italic) back to bold).
 
-        elif s[i] == ")":
-            if stack:
-                out.append(stack.pop())
+Code formatting can also contain emphasis:
+\code(print("Hello") with \em(emphasized explanation)).
 
-            i += 1
-        else:
-            out.append(s[i])
-            i += 1
+A paragraph with several nested commands:
+\p(Inside this paragraph we have \strong(very important \i(italic detail) that also includes \code(sample_code())) before continuing.)
+
+Size commands may also contain formatting:
+\large(This is large text with \b(bold words) and \i(italic words).)
+
+\section(Multiple Levels)
+
+\strong(
+    Strong text with
+    \b(
+        bold containing
+        \i(
+            italic containing
+            \u(
+                underlined text
+            )
+        )
+    )
+)
+
+\sub(Complex Example)
+
+This demonstrates mixed nesting:
+\b(The quick \i(brown \u(fox)) jumps) over the lazy dog.
+
+Another example:
+\em(Emphasized text with \code(inline_code(\b(argument)))).
+
+\section(End)
+
+Everything above is intentionally nested to test recursive parsing.
+"""
+
+
+
+def convert_commands(text: str):
+    pattern = regex.compile(r'(\\[a-zA-Z]+)\((?P<inner>(?:[^()]|\((?P>inner)\))*)\)')
+    matches = list(pattern.finditer(text))
+    if not matches:
+        return text
+
+    new_string = ""
+    last = 0
+    for m in matches:
+        new_string += text[last:m.start()]
+
+        cmd = m.group(1)
+        inner = m.group("inner")
+
+        new_string = new_string + (f"{COMMANDS[cmd][0]}{{{convert_commands(inner)}}}")
+
+        last = m.end()
+
+    new_string += text[last:]
+    return new_string
     
-    return "".join(out)
 
-print(convert_commands(input_string))
+result = convert_commands(nested_string)
+print("*"*15 + "RESULTS" + "*"*15)
+print(result)
