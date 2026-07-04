@@ -27,9 +27,9 @@ const EXAMPLE_SYNTAX = `\\section(Welcome to LuTex)
 \\heading(Code Example)
 
 \\code(
-function greet(name) {
+function greet(name) \\{
     console.log("Hello, " + name);
-}
+\\}
 )
 
 \\heading(Math Support)
