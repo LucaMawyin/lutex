@@ -259,7 +259,7 @@ export default function Home() {
                     style={{ fontFamily: "Computer Modern Serif" }}
                     
                 >
-                    LuTex
+                    LuTeX
                 </h1>
                 <a 
                     href="/documentation" 

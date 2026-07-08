@@ -3,11 +3,11 @@
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 
-const EXAMPLE_SYNTAX = `\\section(Welcome to LuTex)
+const EXAMPLE_SYNTAX = `\\section(Welcome to LuTeX)
 
 \\p(This is a lightweight markup system designed to make writing structured documents simple and readable.)
 
-\\heading(Why use LuTex?)
+\\heading(Why use LuTeX?)
 
 \\list(
 - Clean, minimal syntax
@@ -75,7 +75,7 @@ export default function DocumentationPage() {
             
             <header className="space-y-2">
                 <a href="/">&lt; Return to Main Page</a>
-                <h1 className="text-[2.5em]! font-bold">LuTex Documentation</h1>
+                <h1 className="text-[2.5em]! font-bold">LuTeX Documentation</h1>
                 <p className="text-gray-600">
                     A simple LaTeX-to-PDF generator using custom intuitive syntax.
                 </p>
@@ -84,7 +84,7 @@ export default function DocumentationPage() {
             <section className="space-y-2">
                 <h2 className="text-xl font-semibold">Overview</h2>
                 <p className="text-gray-700">
-                    LuTex allows you to write LaTeX-like input in a text editor and convert it into a downloadable PDF.
+                    LuTeX allows you to write LaTeX-like input in a text editor and convert it into a downloadable PDF.
                     It communicates with a backend API that processes your content and returns a generated PDF file.
                 </p>
             </section>
@@ -135,7 +135,7 @@ export default function DocumentationPage() {
                 <h2 className="text-xl font-semibold">Syntax</h2>
 
                 <p className="text-gray-700">
-                    LuTex uses a lightweight custom syntax that compiles into LaTeX commands before generating a PDF.
+                    LuTeX uses a lightweight custom syntax that compiles into LaTeX commands before generating a PDF.
                     Most commands follow the format <code>\command(text)</code>, and some shortcuts map directly to LaTeX equivalents.
                 </p>
 
@@ -244,7 +244,7 @@ export default function DocumentationPage() {
 
             </section>
             <footer className="pt-6 text-sm text-gray-500 self-center">
-                &copy; LuTex {new Date().getFullYear()}
+                &copy; LuTeX {new Date().getFullYear()}
             </footer>
         </div>
     );
