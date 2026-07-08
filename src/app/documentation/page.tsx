@@ -105,7 +105,7 @@ export default function DocumentationPage() {
                     <li>Basic LaTeX-style formatting</li>
                     <li>Environment blocks (if supported by API)</li>
                     <li>Console feedback for warnings and errors</li>
-                    <li><b>Note:</b> LaTex syntax is also supported</li>
+                    <li><b>Note:</b> LaTeX syntax is also supported</li>
                 </ul>
             </section>
 
