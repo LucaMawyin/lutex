@@ -332,7 +332,7 @@ def convert_math(text: str):
             if line.strip()
         ]
 
-        content = " \\\\ \n".join(lines)
+        content = " \\\\ \n".join(lines).replace(r"*",r"\times ")
         return f"\\begin{{align*}}\n{content}\n\\end{{align*}}"
 
     return regex.sub(pattern, repl, text, flags=regex.DOTALL)

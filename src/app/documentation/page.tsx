@@ -240,6 +240,7 @@ export default function DocumentationPage() {
                     <li>Most commands are wrappers around LaTeX equivalents.</li>
                     <li>Parser is regex-based — avoid deeply nested structures.</li>
                     <li>Some features (like math and environments) depend on backend support.</li>
+                    <li><strong>When in doubt, standard LaTeX syntax is always supported and recommended.</strong></li>
                 </ul>
 
             </section>
