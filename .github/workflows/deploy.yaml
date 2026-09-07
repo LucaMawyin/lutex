@@ -9,15 +9,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ec2-user/lutex
-            git pull origin main
-            source .venv/bin/activate
-            pip install -r requirements.txt
-            sudo systemctl restart lutex
+      - name: Install cloudflared
+        run: |
+          curl -L --output cloudflared.deb \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared.deb
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' '${{ secrets.PI_SSH_KEY }}' > ~/.ssh/github_actions
+          chmod 600 ~/.ssh/github_actions
+
+          cat > ~/.ssh/config <<'EOF'
+          Host ssh.lucamawyin.com
+            HostName ssh.lucamawyin.com
+            User lucamawyin
+            IdentityFile ~/.ssh/github_actions
+            ProxyCommand cloudflared access ssh --hostname %h
+            StrictHostKeyChecking no
+          EOF
+
+          chmod 600 ~/.ssh/config
+
+      - name: Deploy to Raspberry Pi
+        run: |
+          ssh ssh.lucamawyin.com <<'EOF'
+            cd /home/lucamawyin/lutex
+            ./deploy.sh
+          EOF
