@@ -248,13 +248,19 @@ export default function Home() {
 
 	return (
         <div className="
-            h-full
-            flex flex-col
+            flex 
+            flex-col
+            flex-1
             items-center
         ">
 
             {/* HEADER */}
-            <div className="my-8 text-center">
+            <div className="
+                mt-6 
+                mb-6
+                sm:mb-0
+                text-center
+            ">
                 <h1 
                     style={{ fontFamily: "Computer Modern Serif" }}
                     
@@ -279,7 +285,8 @@ export default function Home() {
                     w-full
                     h-full
                     min-h-0
-                    sm:p-8
+                    sm:px-8
+                    sm:py-4
                     gap-8
                 `}
             >
@@ -456,7 +463,13 @@ export default function Home() {
                     />
 
                     {/* BUTTONS */}
-                    <div className="flex justify-between flex-col gap-4 sm:gap-0 sm:flex-row">
+                    <div className="
+                        flex 
+                        flex-col
+                        justify-between 
+                        gap-4 
+                        sm:flex-row
+                    ">
                         <Button
                             text="View Preview"
                             variant="secondary"
