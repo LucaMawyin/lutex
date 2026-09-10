@@ -21,7 +21,7 @@ export default function Footer() {
                 sm:flex-row
             ">
                 <p>
-                    © {new Date().getFullYear()} Resume Designer by{" "}
+                    © {new Date().getFullYear()} LuTeX by{" "}
                     <a
                         href="https://lucamawyin.com"
                         target="_blank"
