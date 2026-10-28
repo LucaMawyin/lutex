@@ -294,17 +294,19 @@ export default function Home() {
                 {/* CONSOLE */}
                 <div className={`
                     bg-gray-50
-                    border 
+                    border
                     border-gray-200
                     rounded-xl
 
                     lg:w-[25vw]
                     min-w-75
-                    ${consoleOpen ? "min-h-full" : "min-h-fit"}
+                    lg:h-[75vh]
+                    lg:max-h-[75vh]
+                    min-h-0
 
-                    flex 
+                    flex
                     flex-col
-                    
+
                     p-4
                     shadow-sm
                 `}>
@@ -384,8 +386,10 @@ export default function Home() {
                     <div className={`
                             ${consoleOpen ? "block" : "hidden"}
                             lg:block
-                            space-y-4 
-                            overflow-y-auto 
+
+                            space-y-4
+                            overflow-y-auto
+                            min-h-0
                             flex-1
                             mt-3
                         `}
@@ -435,7 +439,7 @@ export default function Home() {
 
                         min-w-75
                         lg:w-[40vw]
-                        lg:min-h-[60vh]
+                        lg:h-[75vh]
                         min-h-[75vh]
 
                         p-4
